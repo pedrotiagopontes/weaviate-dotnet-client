@@ -9,9 +9,9 @@ public class Data(HttpClient httpClient, string baseUrl)
         return new ObjectCreator(httpClient, baseUrl);
     }
     
-    public ObjectService Getter()
+    public ObjectGetter Getter()
     { 
         //TODO: review this to match patterns
-        return new ObjectService(httpClient, baseUrl);
+        return new ObjectGetter(httpClient, baseUrl);
     }
 }

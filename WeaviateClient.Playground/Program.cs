@@ -33,7 +33,7 @@ foreach (var obj in objects)
 var obj1 = await client.Data().Getter().GetAsync(Guid.Parse("2b0fd838-e964-48f1-9899-6282475fe858"));
 Console.WriteLine(JsonSerializer.Serialize(obj1));
 
-// Create an object
+// Create an object using REST API
 var result = await client.Data().Creator().
     WithClassName("Person").
     WithProperties(new Dictionary<string, object>
@@ -42,4 +42,5 @@ var result = await client.Data().Creator().
         {"age", 30}
     }).
     CreateAsync();
+    
 Console.WriteLine(JsonSerializer.Serialize(result));

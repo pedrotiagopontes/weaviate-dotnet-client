@@ -4,11 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Models;
 
-
-/// <summary>
-/// 
-/// </summary>
-public class ObjectService(HttpClient httpClient, string baseUrl)
+public class ObjectGetter(HttpClient httpClient, string baseUrl)
 {
     private const string ObjectsPath = "objects";
 
@@ -29,21 +25,4 @@ public class ObjectService(HttpClient httpClient, string baseUrl)
 
         return responseObject?.Objects ?? [];
     }
-    
-    public async Task<WeaviateObject> CreateAsync(WeaviateObject weaviateObject)
-    {
-        var requestUri = $"{baseUrl}/{ObjectsPath}"; 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(weaviateObject),
-            Encoding.UTF8,
-            "application/json");
-
-        var response = await httpClient.PostAsync(requestUri, jsonContent);
-
-        response.EnsureSuccessStatusCode();
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var createdObject = await JsonSerializer.DeserializeAsync<WeaviateObject>(responseStream);
-
-        return createdObject ?? new WeaviateObject();
-    }
-
 }
