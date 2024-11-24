@@ -1,6 +1,7 @@
 ﻿namespace WeaviateClient.Client;
 
 using System.Net.Http.Headers;
+using Schema;
 
 public class WeaviateClient(HttpClient client)
 {
@@ -38,5 +39,10 @@ public class WeaviateClient(HttpClient client)
     public Data Data()
     {
         return new Data(client, baseUrl);
+    }
+    
+    public SchemaDeleter SchemaDeleter()
+    {
+        return new SchemaDeleter(client, baseUrl);
     }
 }
