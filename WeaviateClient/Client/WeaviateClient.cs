@@ -1,4 +1,4 @@
-﻿namespace weaviate_dotnet_client_poc.Client;
+﻿namespace WeaviateClient.Client;
 
 using System.Net.Http.Headers;
 

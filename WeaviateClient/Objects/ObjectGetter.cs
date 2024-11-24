@@ -1,7 +1,7 @@
 ﻿namespace WeaviateClient.Objects;
 
 using System.Text.Json;
-using weaviate_dotnet_client_poc.Models;
+using Models;
 
 public class ObjectGetter(HttpClient httpClient, string baseUrl)
 {

@@ -1,6 +1,6 @@
-﻿namespace weaviate_dotnet_client_poc.Client;
+﻿namespace WeaviateClient.Client;
 
-using global::WeaviateClient.Objects;
+using Objects;
 
 public class Data(HttpClient httpClient, string baseUrl)
 {

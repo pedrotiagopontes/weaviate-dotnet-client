@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using DotNetEnv;
-using weaviate_dotnet_client_poc.Client;
 
 Env.Load();
 var hostAddress = Environment.GetEnvironmentVariable("WCD_HOST_NAME");
@@ -15,7 +14,7 @@ if (apiKey is null){
 }
 
 var httpClient = new HttpClient();
-var client = new WeaviateClient(httpClient);
+var client = new WeaviateClient.Client.WeaviateClient(httpClient);
 client.
     WithBaseURl(hostAddress).
     WithApikey(apiKey).

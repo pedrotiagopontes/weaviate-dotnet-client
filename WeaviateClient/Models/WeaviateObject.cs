@@ -1,4 +1,4 @@
-﻿namespace weaviate_dotnet_client_poc.Models;
+﻿namespace WeaviateClient.Models;
 
 using System;
 using System.Text.Json.Serialization;
