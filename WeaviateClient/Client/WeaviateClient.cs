@@ -1,7 +1,6 @@
 ﻿namespace weaviate_dotnet_client_poc.Client;
 
 using System.Net.Http.Headers;
-using Objects;
 
 public class WeaviateClient(HttpClient client)
 {

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaviateClient", "WeaviateC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaviateClient.Playground", "WeaviateClient.Playground\WeaviateClient.Playground.csproj", "{C8995721-EE65-4D41-9A13-50DD57298315}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaviateClient.Test", "WeaviateClient.Test\WeaviateClient.Test.csproj", "{332DF8BE-B0FE-40B5-AE28-BF8A414332EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C8995721-EE65-4D41-9A13-50DD57298315}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8995721-EE65-4D41-9A13-50DD57298315}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8995721-EE65-4D41-9A13-50DD57298315}.Release|Any CPU.Build.0 = Release|Any CPU
+		{332DF8BE-B0FE-40B5-AE28-BF8A414332EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332DF8BE-B0FE-40B5-AE28-BF8A414332EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332DF8BE-B0FE-40B5-AE28-BF8A414332EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332DF8BE-B0FE-40B5-AE28-BF8A414332EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

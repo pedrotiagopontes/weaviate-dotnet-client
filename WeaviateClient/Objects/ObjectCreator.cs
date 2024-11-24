@@ -1,22 +1,24 @@
-﻿namespace weaviate_dotnet_client_poc.Objects;
+﻿namespace WeaviateClient.Objects;
 
 using System.Text;
 using System.Text.Json;
-using Models;
+using weaviate_dotnet_client_poc.Models;
 
 public class ObjectCreator
 {
+    private const string ObjectsPath = "objects";
+    
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
-    private const string ObjectsPath = "objects";
+    
+    private WeaviateObject weaviateObject;
     
     public ObjectCreator(HttpClient httpClient, string baseUrl)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+        weaviateObject = new WeaviateObject();
     }
-    
-    protected WeaviateObject weaviateObject;
     
     public ObjectCreator WithClassName(string className)
     {
@@ -37,28 +39,22 @@ public class ObjectCreator
         return this;
     }
 
-    public ObjectCreator WithVector(float vector)
+    public ObjectCreator WithVector(float[] vector)
     {
         weaviateObject.Vector = vector;
         return this;
     }
 
-    public ObjectCreator WithVectors(Dictionary<string, float> vectors)
+    public ObjectCreator WithNamedVectors(Dictionary<string, float[]> vectors)
     {
         weaviateObject.Vectors = vectors;
         return this;
     }
 
-    public ObjectCreator WithAdditionalVector(string key, float value)
+    public ObjectCreator WithNamedVector(string key, float[] value)
     {
-        weaviateObject.Vectors ??= new Dictionary<string, float>();
+        weaviateObject.Vectors ??= new Dictionary<string, float[]>();
         weaviateObject.Vectors[key] = value;
-        return this;
-    }
-
-    public ObjectCreator WithTenant(string tenant)
-    {
-        weaviateObject.Tenant = tenant;
         return this;
     }
     
