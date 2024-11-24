@@ -2,7 +2,7 @@
 
 using Client;
 using Microsoft.Extensions.Configuration;
-using Models;
+using Model;
 
 [TestClass]
 public sealed class ObjectCreatorTest

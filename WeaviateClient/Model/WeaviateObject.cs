@@ -1,4 +1,4 @@
-﻿namespace WeaviateClient.Models;
+﻿namespace WeaviateClient.Model;
 
 using System;
 using System.Text.Json.Serialization;

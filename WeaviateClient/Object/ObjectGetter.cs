@@ -1,7 +1,7 @@
-﻿namespace WeaviateClient.Objects;
+﻿namespace WeaviateClient.Object;
 
 using System.Text.Json;
-using Models;
+using Model;
 
 public class ObjectGetter(HttpClient httpClient, string baseUrl)
 {
@@ -20,7 +20,7 @@ public class ObjectGetter(HttpClient httpClient, string baseUrl)
     {
         var requestUri = $"{baseUrl}/{ObjectsPath}/";
         var responseStream = await httpClient.GetStreamAsync(requestUri);
-        var responseObject = await JsonSerializer.DeserializeAsync<ObjectResponse>(responseStream);
+        var responseObject = await JsonSerializer.DeserializeAsync<ObjectListResponse>(responseStream);
 
         return responseObject?.Objects ?? [];
     }

@@ -1,25 +1,18 @@
-﻿namespace WeaviateClient.Objects;
+﻿namespace WeaviateClient.Object;
 
 using System.Text;
 using System.Text.Json;
-using Models;
+using Model;
 
-public class ObjectCreator
+public class ObjectCreator(HttpClient httpClient, string baseUrl)
 {
     private const string ObjectsPath = "objects";
     
-    private readonly HttpClient _httpClient;
-    private readonly string _baseUrl;
+    private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly string baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
     
-    private WeaviateObject weaviateObject;
-    
-    public ObjectCreator(HttpClient httpClient, string baseUrl)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
-        weaviateObject = new WeaviateObject();
-    }
-    
+    private readonly WeaviateObject weaviateObject = new();
+
     public ObjectCreator WithClassName(string className)
     {
         weaviateObject.Class = className;
@@ -60,12 +53,12 @@ public class ObjectCreator
     
     public async Task<WeaviateObject> CreateAsync()
     {
-        var requestUri = $"{_baseUrl}/{ObjectsPath}"; 
+        var requestUri = $"{baseUrl}/{ObjectsPath}"; 
         var jsonContent = new StringContent(JsonSerializer.Serialize(weaviateObject),
             Encoding.UTF8,
             "application/json");
 
-        var response = await _httpClient.PostAsync(requestUri, jsonContent);
+        var response = await httpClient.PostAsync(requestUri, jsonContent);
 
         response.EnsureSuccessStatusCode();
         var responseStream = await response.Content.ReadAsStreamAsync();

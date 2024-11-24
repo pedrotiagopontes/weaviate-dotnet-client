@@ -1,8 +1,8 @@
-﻿namespace WeaviateClient.Models;
+﻿namespace WeaviateClient.Model;
 
 using System.Text.Json.Serialization;
 
-public class ObjectResponse
+public class ObjectListResponse
 {
     [JsonPropertyName("deprecations")]
     public object Deprecations { get; set; }

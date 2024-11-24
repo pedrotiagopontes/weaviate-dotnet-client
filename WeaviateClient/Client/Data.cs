@@ -1,6 +1,6 @@
 ﻿namespace WeaviateClient.Client;
 
-using Objects;
+using Object;
 
 public class Data(HttpClient httpClient, string baseUrl)
 {
