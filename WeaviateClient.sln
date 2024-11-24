@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaviateClient", "WeaviateClient\WeaviateClient.csproj", "{CA58AF1D-E628-487F-A872-F2CD9B4E97B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaviateClient.Playground", "WeaviateClient.Playground\WeaviateClient.Playground.csproj", "{C8995721-EE65-4D41-9A13-50DD57298315}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA58AF1D-E628-487F-A872-F2CD9B4E97B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA58AF1D-E628-487F-A872-F2CD9B4E97B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA58AF1D-E628-487F-A872-F2CD9B4E97B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA58AF1D-E628-487F-A872-F2CD9B4E97B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8995721-EE65-4D41-9A13-50DD57298315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8995721-EE65-4D41-9A13-50DD57298315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8995721-EE65-4D41-9A13-50DD57298315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8995721-EE65-4D41-9A13-50DD57298315}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
