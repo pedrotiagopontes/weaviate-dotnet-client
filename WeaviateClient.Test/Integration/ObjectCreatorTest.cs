@@ -33,6 +33,7 @@ public sealed class ObjectCreatorTest
     }
     
     [TestMethod]
+    [TestCategory("Integration")]
     public async Task CreateObject_ShouldSucceed_WhenValidInput()
     {   // Arrange
         var expectedObject = new WeaviateObject

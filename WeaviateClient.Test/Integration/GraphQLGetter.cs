@@ -32,6 +32,7 @@ public sealed class GraphQLGetter
     }
     
     [TestMethod]
+    [TestCategory("Integration")]
     public async Task GraphQLGetter_BaseCase_ShouldSucceed()
     {   // Arrange
         
@@ -56,6 +57,8 @@ public sealed class GraphQLGetter
         //TODO: better assert
     }
     
+    [TestMethod]
+    [TestCategory("Integration")]
     public async Task GraphQLGetter_WithLimitAndOffset_ShouldSucceed()
     {   // Arrange
         

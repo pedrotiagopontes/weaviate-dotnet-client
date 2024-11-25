@@ -9,6 +9,7 @@ using GraphQL.QueryBuilder;
 public class HybridBuilderTests
 {
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildHybridQuery_WithAllParameters_ShouldReturnValidQuery()
     {
         // Arrange
@@ -28,6 +29,7 @@ public class HybridBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildHybridQuery_WithMandatoryQueryOnly_ShouldReturnValidQuery()
     {
         // Arrange
@@ -43,6 +45,7 @@ public class HybridBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildHybridQuery_WithAlphaAndProperties_ShouldReturnValidQuery()
     {
         // Arrange
@@ -60,6 +63,7 @@ public class HybridBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildHybridQuery_WithVectorOnly_ShouldReturnValidQuery()
     {
         // Arrange
@@ -76,6 +80,7 @@ public class HybridBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildHybridQuery_WithoutQuery_ShouldThrowException()
     {
@@ -89,6 +94,7 @@ public class HybridBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(ArgumentException))]
     public void BuildHybridQuery_WithInvalidAlpha_ShouldThrowException()
     {

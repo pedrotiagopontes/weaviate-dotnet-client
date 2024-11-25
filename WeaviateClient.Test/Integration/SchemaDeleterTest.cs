@@ -32,6 +32,7 @@ public sealed class SchemaDeleterTest
     }
     
     [TestMethod]
+    [TestCategory("Integration")]
     public async Task DeleteSchema_ShouldSucceed()
     {   // Arrange
         var httpClient = new HttpClient();

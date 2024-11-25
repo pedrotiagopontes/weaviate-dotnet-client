@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 public class QueryBuilderTests
 {
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithBasicFields_ShouldReturnValidQuery()
     {
         var query = new QueryBuilder()
@@ -30,6 +31,7 @@ public class QueryBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithLimit_ShouldReturnValidQuery()
     {
         var query = new QueryBuilder()
@@ -52,6 +54,7 @@ Get {
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithOffsetAndLimit_ShouldReturnValidQuery()
     {
         var query = new QueryBuilder()
@@ -74,6 +77,7 @@ Get {
     }
     
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithParametersInAnyOrder_ShouldReturnValidQuery()
     {
         var query1 = new QueryBuilder()
@@ -94,6 +98,7 @@ Get {
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildQuery_WithoutOperationOrClassName_ShouldThrowException()
     {
@@ -103,6 +108,7 @@ Get {
     }
     
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithBM25_ShouldReturnValidQuery()
     {
         var search = new BM25Builder().WithQuery("food").FilterOn(["answer", "question"]);
@@ -126,6 +132,7 @@ Get {
     }
     
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithHybrid_ShouldReturnValidQuery()
     {
         var search = new HybridBuilder().WithQuery("food").WithAlpha(0.5f);
@@ -149,6 +156,7 @@ Get {
     }
     
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildQuery_WithNearVector_ShouldReturnValidQuery()
     {
         var search = new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
@@ -172,6 +180,7 @@ Get {
     }
     
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(ArgumentException))]
     public void BuildQuery_WithMultipleSearch_ShouldThrowException()
     {

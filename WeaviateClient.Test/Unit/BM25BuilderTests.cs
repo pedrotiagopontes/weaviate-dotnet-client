@@ -7,6 +7,7 @@ using WeaviateClient.GraphQL;
 public class Bm25BuilderTests
 {
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildBM25Query_WithQueryAndProperties_ShouldReturnValidQuery()
     {
         // Arrange
@@ -23,6 +24,7 @@ public class Bm25BuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildBM25Query_WithQueryOnly_ShouldReturnValidQuery()
     {
         // Arrange
@@ -38,6 +40,7 @@ public class Bm25BuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildBM25Query_WithoutQuery_ShouldThrowException()
     {
@@ -51,6 +54,7 @@ public class Bm25BuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildBM25Query_WithEmptyProperties_ShouldReturnValidQueryWithoutProperties()
     {
         // Arrange

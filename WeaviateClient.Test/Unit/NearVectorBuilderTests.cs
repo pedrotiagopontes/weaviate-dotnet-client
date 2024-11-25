@@ -9,6 +9,7 @@ using GraphQL.QueryBuilder;
 public class NearVectorBuilderTests
 {
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildNearVector_WithVectorAndCertainty_ShouldReturnValidQuery()
     {
         // Arrange
@@ -25,6 +26,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildNearVector_WithVectorAndDistance_ShouldReturnValidQuery()
     {
         // Arrange
@@ -41,6 +43,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void BuildNearVector_WithOnlyVector_ShouldReturnValidQuery()
     {
         // Arrange
@@ -56,6 +59,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildNearVector_WithVectorAndBothDistanceAndCertainty_ShouldThrowException()
     {
@@ -72,6 +76,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildNearVector_WithoutVector_ShouldThrowException()
     {
@@ -86,6 +91,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(ArgumentException))]
     public void BuildNearVector_WithNegativeDistance_ShouldThrowException()
     {
@@ -101,6 +107,7 @@ public class NearVectorBuilderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(ArgumentException))]
     public void BuildNearVector_WithInvalidCertainty_ShouldThrowException()
     {

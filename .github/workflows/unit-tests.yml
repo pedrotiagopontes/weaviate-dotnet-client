@@ -3,10 +3,10 @@ name: Build and Run Unit Tests
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -28,4 +28,4 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run Unit Tests
-      run: dotnet test WeaviateClient.Test/WeaviateClient.Test.csproj --filter FullyQualifiedName~WeaviateClient.Test.Unit --no-build --verbosity normal
+      run: dotnet test WeaviateClient.Test/WeaviateClient.Test.csproj --filter TestCategory=Unit --no-build --verbosity normal
