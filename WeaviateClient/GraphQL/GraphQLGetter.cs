@@ -4,52 +4,47 @@ using System.Text;
 using System.Text.Json;
 using Model;
 
-public class GraphQLGetter: GraphQlQueryBuilder
+public class GraphQLGetter
 {
     private readonly HttpClient httpClient;
     private readonly string baseUrl;
+    private readonly GraphQlQueryBuilder queryBuilder;
 
     public GraphQLGetter(HttpClient httpClient, string baseUrl)
     {
         this.httpClient = httpClient;
         this.baseUrl = $"{baseUrl}/graphql";
-        Root("Get");
+        queryBuilder = new GraphQlQueryBuilder();
+        queryBuilder.Operation("Get");
     }
     
     public GraphQLGetter WithClassName(string className)
     {
-        QueryBuilder.AppendLine($"    {className} {{");
+        queryBuilder.WithClassName(className);
         return this;
     }
 
-    
-    public GraphQLGetter WithFields(string[] fields)
+    public GraphQLGetter WithProprieties(string[] fields)
     {
-        foreach (var field in fields)
-        {
-            QueryBuilder.AppendLine($"        {field}");
-        }
+        queryBuilder.WithProprieties(fields);
         return this;
     }
 
-    // // Adds a method (e.g., bm25) with arguments
-    // public GetQueryBuilder Method(string methodName, IDictionary<string, string> arguments)
-    // {
-    //     var formattedArgs = string.Join(", ", arguments.Select(arg => $"{arg.Key}: {arg.Value}"));
-    //     QueryBuilder.AppendLine($"    {methodName}({formattedArgs}) {{");
-    //     return this;
-    // }
-    
-    private string Build()
+    public GraphQLGetter WithLimit(int limit)
     {
-        CloseBlock();
-        CloseAll();
-        return $"{{\n{QueryBuilder.ToString()}}}";
+        queryBuilder.WithLimit(limit);
+        return this;
+    }
+
+    public GraphQLGetter WithOffset(int offset)
+    {
+        queryBuilder.WithOffset(offset);
+        return this;
     }
 
     public async Task<GraphQLResponse> QueryAsync()
     {
-        var rawQuery = Build();
+        var rawQuery = queryBuilder.Build();
         var query = new GraphQLQuery(rawQuery);
         var jsonContent = new StringContent(JsonSerializer.Serialize(query),
             Encoding.UTF8,

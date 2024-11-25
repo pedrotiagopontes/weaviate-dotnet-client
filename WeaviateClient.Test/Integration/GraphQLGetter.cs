@@ -32,7 +32,7 @@ public sealed class GraphQLGetter
     }
     
     [TestMethod]
-    public async Task GraphQLGetter_ShouldSucceed_WhenValidInput()
+    public async Task GraphQLGetter_BaseCase_ShouldSucceed()
     {   // Arrange
         
         var httpClient = new HttpClient();
@@ -46,7 +46,33 @@ public sealed class GraphQLGetter
         // Act
         var result = await client.GraphQL().Get().
             WithClassName("Person").
-            WithFields(["name", "age"]).
+            WithProprieties(["name", "age"]).
+            QueryAsync();
+        
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsNull(result.Errors);
+        Assert.IsNotNull(result.Data);
+        //TODO: better assert
+    }
+    
+    public async Task GraphQLGetter_WithLimitAndOffset_ShouldSucceed()
+    {   // Arrange
+        
+        var httpClient = new HttpClient();
+        var client = new WeaviateClient(httpClient);
+        client.
+            WithBaseURl(hostAddress).
+            WithApikey(apiKey).
+            WithUserAgent("local-test").
+            AcceptHeaders(["application/json"]);
+        
+        // Act
+        var result = await client.GraphQL().Get().
+            WithClassName("Person").
+            WithProprieties(["name", "age"]).
+            WithLimit(1).
+            WithOffset(1).
             QueryAsync();
         
         // Assert
