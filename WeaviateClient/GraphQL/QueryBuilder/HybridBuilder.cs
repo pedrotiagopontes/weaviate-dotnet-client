@@ -1,6 +1,6 @@
-﻿namespace WeaviateClient.GraphQL;
+﻿namespace WeaviateClient.GraphQL.QueryBuilder;
 
-public class HybridQueryBuilder
+public class HybridBuilder:ISearchQueryBuilder
 {
     private string? hybridQuery;
     private float? alpha;
@@ -8,13 +8,13 @@ public class HybridQueryBuilder
     private readonly List<string> properties = new();
     private string? fusionType;
 
-    public HybridQueryBuilder WithQuery(string query)
+    public HybridBuilder WithQuery(string query)
     {
         hybridQuery = query;
         return this;
     }
 
-    public HybridQueryBuilder WithAlpha(float alphaValue)
+    public HybridBuilder WithAlpha(float alphaValue)
     {
         if (alphaValue is < 0 or > 1)
         {
@@ -25,22 +25,27 @@ public class HybridQueryBuilder
         return this;
     }
 
-    public HybridQueryBuilder WithVector(float[] vectorValue)
+    public HybridBuilder WithVector(float[] vectorValue)
     {
         vector = vectorValue;
         return this;
     }
 
-    public HybridQueryBuilder WithProperties(string[] fields)
+    public HybridBuilder WithProperties(string[] fields)
     {
         properties.AddRange(fields);
         return this;
     }
 
-    public HybridQueryBuilder WithFusionType(string fusionTypeValue)
+    public HybridBuilder WithFusionType(string fusionTypeValue)
     {
         fusionType = fusionTypeValue;
         return this;
+    }
+
+    public string SearchType()
+    {
+        return "hybrid";
     }
 
     public string Build()

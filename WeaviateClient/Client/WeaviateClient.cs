@@ -20,6 +20,12 @@ public class WeaviateClient(HttpClient client)
         return this;
     }
     
+    public WeaviateClient WithOpenAIKey(string token)
+    {
+        client.DefaultRequestHeaders.Add("X-OpenAI-Api-Key", $"{token}");
+        return this;
+    }
+    
     public WeaviateClient WithUserAgent(string userAgent)
     {
         client.DefaultRequestHeaders.Add("User-Agent", $"{userAgent}");

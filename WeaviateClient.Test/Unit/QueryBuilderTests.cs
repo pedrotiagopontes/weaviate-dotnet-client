@@ -1,6 +1,7 @@
 ﻿namespace WeaviateClient.Test.Unit;
 
 using GraphQL;
+using GraphQL.QueryBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
@@ -73,50 +74,6 @@ Get {
     }
     
     [TestMethod]
-    public void BuildQuery_WithBM25_ShouldReturnValidQuery()
-    {
-        var query = new QueryBuilder()
-            .Operation("Get")
-            .WithClassName("JeopardyQuestion")
-            .WithFields(["question", "answer"])
-            .WithLimit(3)
-            .WithBM25("food")
-            .Build();
-
-        var expected = @"{
-Get {
-    JeopardyQuestion (limit: 3, bm25: { query: ""food"" }) {
-        question
-        answer
-    }
-}
-}";
-        AssertAreEqualQuery(expected, query);
-    }
-    
-    [TestMethod]
-    public void BuildQuery_WithBM25WithProperty_ShouldReturnValidQuery()
-    {
-        var query = new QueryBuilder()
-            .Operation("Get")
-            .WithClassName("JeopardyQuestion")
-            .WithFields(["question", "answer"])
-            .WithLimit(3)
-            .WithBM25("food", ["answer", "question"])
-            .Build();
-
-        var expected = @"{
-Get {
-    JeopardyQuestion (limit: 3, bm25: { query: ""food"", properties: [""answer"", ""question""] }) {
-        question
-        answer
-    }
-}
-}";
-        AssertAreEqualQuery(expected, query);
-    }
-    
-    [TestMethod]
     public void BuildQuery_WithParametersInAnyOrder_ShouldReturnValidQuery()
     {
         var query1 = new QueryBuilder()
@@ -143,6 +100,92 @@ Get {
         var query = new QueryBuilder()
             .WithFields(["name", "age"])
             .Build();
+    }
+    
+    [TestMethod]
+    public void BuildQuery_WithBM25_ShouldReturnValidQuery()
+    {
+        var search = new BM25Builder().WithQuery("food").FilterOn(["answer", "question"]);
+        var query = new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithSearch(search)
+            .Build();
+
+        var expected = @"{
+Get {
+    JeopardyQuestion (limit: 3, bm25: { query: ""food"", properties: [""answer"", ""question""] }) {
+        question
+        answer
+    }
+}
+}";
+        AssertAreEqualQuery(expected, query);
+    }
+    
+    [TestMethod]
+    public void BuildQuery_WithHybrid_ShouldReturnValidQuery()
+    {
+        var search = new HybridBuilder().WithQuery("food").WithAlpha(0.5f);
+        var query = new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithSearch(search)
+            .Build();
+
+        var expected = @"{
+Get {
+    JeopardyQuestion (limit: 3, hybrid: { query: ""food"", alpha: 0.5 }) {
+        question
+        answer
+    }
+}
+}";
+        AssertAreEqualQuery(expected, query);
+    }
+    
+    [TestMethod]
+    public void BuildQuery_WithNearVector_ShouldReturnValidQuery()
+    {
+        var search = new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
+        var query = new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithSearch(search)
+            .Build();
+
+        var expected = @"{
+Get {
+    JeopardyQuestion (limit: 3, nearVector: { vector: [0.1, 0.2, 0.3] }) {
+        question
+        answer
+    }
+}
+}";
+        AssertAreEqualQuery(expected, query);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void BuildQuery_WithMultipleSearch_ShouldThrowException()
+    {
+        var searchHybrid = new HybridBuilder().WithQuery("food").WithAlpha(0.5f);
+        var searchNear = new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
+        var query = new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithSearch(searchHybrid)
+            .WithSearch(searchNear)
+            .Build();
+        
     }
     
     private void AssertAreEqualQuery(string expected, string actual)

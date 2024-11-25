@@ -1,19 +1,24 @@
-﻿namespace WeaviateClient.GraphQL;
-public class BM25QueryBuilder
+﻿namespace WeaviateClient.GraphQL.QueryBuilder;
+public class BM25Builder:ISearchQueryBuilder
 {
     private string? bm25Query;
     private readonly List<string> bm25FilterFields = new();
 
-    public BM25QueryBuilder WithQuery(string query)
+    public BM25Builder WithQuery(string query)
     {
         bm25Query = query;
         return this;
     }
 
-    public BM25QueryBuilder FilterOn(string[] fields)
+    public BM25Builder FilterOn(string[] fields)
     {
         bm25FilterFields.AddRange(fields);
         return this;
+    }
+
+    public string SearchType()
+    {
+        return "bm25";
     }
 
     public string Build()

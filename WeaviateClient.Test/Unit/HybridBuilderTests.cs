@@ -3,15 +3,16 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using GraphQL;
+using GraphQL.QueryBuilder;
 
 [TestClass]
-public class HybridQueryBuilderTests
+public class HybridBuilderTests
 {
     [TestMethod]
     public void BuildHybridQuery_WithAllParameters_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new HybridQueryBuilder()
+        var builder = new HybridBuilder()
             .WithQuery("fox")
             .WithAlpha(0.85f)
             .WithVector([0.1f, 0.2f, 0.3f])
@@ -30,7 +31,7 @@ public class HybridQueryBuilderTests
     public void BuildHybridQuery_WithMandatoryQueryOnly_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new HybridQueryBuilder()
+        var builder = new HybridBuilder()
             .WithQuery("fox");
 
         // Act
@@ -45,7 +46,7 @@ public class HybridQueryBuilderTests
     public void BuildHybridQuery_WithAlphaAndProperties_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new HybridQueryBuilder()
+        var builder = new HybridBuilder()
             .WithQuery("fox")
             .WithAlpha(0.75f)
             .WithProperties(["title"]);
@@ -62,7 +63,7 @@ public class HybridQueryBuilderTests
     public void BuildHybridQuery_WithVectorOnly_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new HybridQueryBuilder()
+        var builder = new HybridBuilder()
             .WithQuery("fox")
             .WithVector([0.4f, 0.5f]);
 
@@ -79,7 +80,7 @@ public class HybridQueryBuilderTests
     public void BuildHybridQuery_WithoutQuery_ShouldThrowException()
     {
         // Arrange
-        var builder = new HybridQueryBuilder();
+        var builder = new HybridBuilder();
 
         // Act
         builder.Build();
@@ -92,7 +93,7 @@ public class HybridQueryBuilderTests
     public void BuildHybridQuery_WithInvalidAlpha_ShouldThrowException()
     {
         // Arrange
-        var builder = new HybridQueryBuilder()
+        var builder = new HybridBuilder()
             .WithQuery("fox")
             .WithAlpha(1.5f); // Invalid alpha
 

@@ -1,4 +1,4 @@
-﻿namespace WeaviateClient.GraphQL;
+﻿namespace WeaviateClient.GraphQL.QueryBuilder;
 
 using System.Text;
 
@@ -9,7 +9,7 @@ public class QueryBuilder
     private string? className;
     private readonly List<string> fields = [];
     private readonly Dictionary<string, string> parameters = new();
-    private readonly BM25QueryBuilder bm25QueryBuilder = new();
+    private bool hasSearchQuery = false;
 
     public QueryBuilder Operation(string operationName)
     {
@@ -45,23 +45,14 @@ public class QueryBuilder
         return WithParameter("offset", offset);
     }
     
-    public QueryBuilder WithBM25(string query)
+    public QueryBuilder WithSearch(ISearchQueryBuilder searchQueryBuilder)
     {
-        bm25QueryBuilder.WithQuery(query);
-        WithParameter("bm25", bm25QueryBuilder.Build());
-        return this;
-    }
-    
-    public QueryBuilder WithBM25(string query, string[] filterFields)
-    {
-        bm25QueryBuilder.WithQuery(query).FilterOn(filterFields);
-        WithParameter("bm25", bm25QueryBuilder.Build());
-        return this;
-    }
-
-    public QueryBuilder WithHybrid(HybridQueryBuilder hybridQueryBuilder)
-    {
-        WithParameter("hybrid", hybridQueryBuilder.Build());
+        if (hasSearchQuery)
+        {
+            throw new ArgumentException("can only configure one search parameter per query");
+        }
+        WithParameter(searchQueryBuilder.SearchType(), searchQueryBuilder.Build());
+        hasSearchQuery = true;
         return this;
     }
 

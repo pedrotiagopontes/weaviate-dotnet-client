@@ -3,18 +3,19 @@
 using System.Text;
 using System.Text.Json;
 using Model;
+using QueryBuilder;
 
 public class GraphQLGetter
 {
     private readonly HttpClient httpClient;
     private readonly string baseUrl;
-    private readonly QueryBuilder queryBuilder;
+    private readonly QueryBuilder.QueryBuilder queryBuilder;
 
     public GraphQLGetter(HttpClient httpClient, string baseUrl)
     {
         this.httpClient = httpClient;
         this.baseUrl = $"{baseUrl}/graphql";
-        queryBuilder = new QueryBuilder();
+        queryBuilder = new QueryBuilder.QueryBuilder();
         queryBuilder.Operation("Get");
     }
     
@@ -42,21 +43,9 @@ public class GraphQLGetter
         return this;
     }
 
-    public GraphQLGetter WithBM25(string query)
+    public GraphQLGetter WithSearch(ISearchQueryBuilder searchQueryBuilder)
     {
-        queryBuilder.WithBM25(query);
-        return this;
-    }
-    
-    public GraphQLGetter WithBM25(string query, string[] properties)
-    {
-        queryBuilder.WithBM25(query, properties);
-        return this;
-    }
-    
-    public GraphQLGetter WithHybrid(HybridQueryBuilder hybridQueryBuilder)
-    {
-        queryBuilder.WithHybrid(hybridQueryBuilder);
+        queryBuilder.WithSearch(searchQueryBuilder);
         return this;
     }
 

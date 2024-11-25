@@ -1,15 +1,16 @@
 ﻿namespace WeaviateClient.Test.Unit;
 
+using GraphQL.QueryBuilder;
 using WeaviateClient.GraphQL;
 
 [TestClass]
-public class BM25QueryBuilderTests
+public class Bm25BuilderTests
 {
     [TestMethod]
     public void BuildBM25Query_WithQueryAndProperties_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new BM25QueryBuilder()
+        var builder = new BM25Builder()
             .WithQuery("fox")
             .FilterOn(new[] { "title", "content" });
 
@@ -25,7 +26,7 @@ public class BM25QueryBuilderTests
     public void BuildBM25Query_WithQueryOnly_ShouldReturnValidQuery()
     {
         // Arrange
-        var builder = new BM25QueryBuilder()
+        var builder = new BM25Builder()
             .WithQuery("fox");
 
         // Act
@@ -41,7 +42,7 @@ public class BM25QueryBuilderTests
     public void BuildBM25Query_WithoutQuery_ShouldThrowException()
     {
         // Arrange
-        var builder = new BM25QueryBuilder();
+        var builder = new BM25Builder();
 
         // Act
         builder.Build();
@@ -53,7 +54,7 @@ public class BM25QueryBuilderTests
     public void BuildBM25Query_WithEmptyProperties_ShouldReturnValidQueryWithoutProperties()
     {
         // Arrange
-        var builder = new BM25QueryBuilder()
+        var builder = new BM25Builder()
             .WithQuery("fox")
             .FilterOn(Array.Empty<string>());
 
