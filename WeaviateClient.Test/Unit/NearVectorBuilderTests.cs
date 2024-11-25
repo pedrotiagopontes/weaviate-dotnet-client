@@ -2,7 +2,6 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using GraphQL;
 using GraphQL.QueryBuilder;
 
 [TestClass]

@@ -1,7 +1,6 @@
 ﻿namespace WeaviateClient.Test.Unit;
 
 using GraphQL.QueryBuilder;
-using WeaviateClient.GraphQL;
 
 [TestClass]
 public class Bm25BuilderTests
@@ -13,7 +12,7 @@ public class Bm25BuilderTests
         // Arrange
         var builder = new BM25Builder()
             .WithQuery("fox")
-            .FilterOn(new[] { "title", "content" });
+            .FilterOn(["title", "content"]);
 
         // Act
         var result = builder.Build();

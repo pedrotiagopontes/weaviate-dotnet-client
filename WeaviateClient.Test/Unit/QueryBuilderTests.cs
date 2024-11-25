@@ -1,6 +1,5 @@
 ﻿namespace WeaviateClient.Test.Unit;
 
-using GraphQL;
 using GraphQL.QueryBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -102,7 +101,7 @@ Get {
     [ExpectedException(typeof(InvalidOperationException))]
     public void BuildQuery_WithoutOperationOrClassName_ShouldThrowException()
     {
-        var query = new QueryBuilder()
+        new QueryBuilder()
             .WithFields(["name", "age"])
             .Build();
     }
@@ -181,12 +180,35 @@ Get {
     
     [TestMethod]
     [TestCategory("Unit")]
+    public void BuildQuery_WithAfter_ShouldReturnValidQuery()
+    {
+        var query = new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithAfter("002d5cb3-298b-380d-addb-2e026b76c8ed")
+            .Build();
+
+        var expected = @"{
+Get {
+    JeopardyQuestion (limit: 3, after: ""002d5cb3-298b-380d-addb-2e026b76c8ed"") {
+        question
+        answer
+    }
+}
+}";
+        AssertAreEqualQuery(expected, query);
+    }
+    
+    [TestMethod]
+    [TestCategory("Unit")]
     [ExpectedException(typeof(ArgumentException))]
     public void BuildQuery_WithMultipleSearch_ShouldThrowException()
     {
         var searchHybrid = new HybridBuilder().WithQuery("food").WithAlpha(0.5f);
         var searchNear = new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
-        var query = new QueryBuilder()
+        new QueryBuilder()
             .Operation("Get")
             .WithClassName("JeopardyQuestion")
             .WithFields(["question", "answer"])
@@ -195,6 +217,36 @@ Get {
             .WithSearch(searchNear)
             .Build();
         
+    }
+    
+    [TestMethod]
+    [TestCategory("Unit")]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void BuildQuery_WithAfterAndSearch_ShouldThrowException()
+    {
+        var searchNear = new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
+        new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithLimit(3)
+            .WithAfter("id")
+            .WithSearch(searchNear)
+            .Build();
+    }
+    
+    [TestMethod]
+    [TestCategory("Unit")]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void BuildQuery_WithAfterNoLimit_ShouldThrowException()
+    {
+        new NearVectorBuilder().WithVector([0.1f, 0.2f, 0.3f]);
+        new QueryBuilder()
+            .Operation("Get")
+            .WithClassName("JeopardyQuestion")
+            .WithFields(["question", "answer"])
+            .WithAfter("id")
+            .Build();
     }
     
     private void AssertAreEqualQuery(string expected, string actual)
