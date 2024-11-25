@@ -59,6 +59,12 @@ public class QueryBuilder
         return this;
     }
 
+    public QueryBuilder WithHybrid(HybridQueryBuilder hybridQueryBuilder)
+    {
+        WithParameter("hybrid", hybridQueryBuilder.Build());
+        return this;
+    }
+
     public string Build()
     {
         if (string.IsNullOrEmpty(root) || string.IsNullOrEmpty(className))

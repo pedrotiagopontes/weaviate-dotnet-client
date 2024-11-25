@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using DotNetEnv;
+using WeaviateClient.GraphQL;
 
 Env.Load();
 var hostAddress = Environment.GetEnvironmentVariable("WCD_HOST_NAME");
@@ -53,5 +54,17 @@ var queryResult = await client.GraphQL()
     .WithOffset(1)
     .WithBM25("Pedro", ["name"])
     .QueryAsync();
-Console.WriteLine("QueryResult:");
+Console.WriteLine("BM25 query:");
 Console.WriteLine(JsonSerializer.Serialize(queryResult.Data));
+
+var query = new HybridQueryBuilder().WithQuery("Pedro").WithProperties(["name"]).WithAlpha(0.5f);
+var hybridQuery = await client.GraphQL()
+    .Get()
+    .WithClassName("Person")
+    .WithFields(["name", "age"])
+    .WithLimit(1)
+    .WithOffset(1)
+    .WithHybrid(query)
+    .QueryAsync();
+Console.WriteLine("Hybrid query:");
+Console.WriteLine(JsonSerializer.Serialize(hybridQuery.Data));

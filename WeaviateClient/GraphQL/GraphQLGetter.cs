@@ -53,6 +53,12 @@ public class GraphQLGetter
         queryBuilder.WithBM25(query, properties);
         return this;
     }
+    
+    public GraphQLGetter WithHybrid(HybridQueryBuilder hybridQueryBuilder)
+    {
+        queryBuilder.WithHybrid(hybridQueryBuilder);
+        return this;
+    }
 
     public async Task<GraphQLResponse> QueryAsync()
     {
