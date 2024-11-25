@@ -46,7 +46,7 @@ public sealed class GraphQLGetter
         // Act
         var result = await client.GraphQL().Get().
             WithClassName("Person").
-            WithProprieties(["name", "age"]).
+            WithFields(["name", "age"]).
             QueryAsync();
         
         // Assert
@@ -70,7 +70,7 @@ public sealed class GraphQLGetter
         // Act
         var result = await client.GraphQL().Get().
             WithClassName("Person").
-            WithProprieties(["name", "age"]).
+            WithFields(["name", "age"]).
             WithLimit(1).
             WithOffset(1).
             QueryAsync();

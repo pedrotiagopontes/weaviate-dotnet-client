@@ -2,46 +2,61 @@
 
 using System.Text;
 
-public class GraphQlQueryBuilder
+public class QueryBuilder
 {
-    private readonly StringBuilder queryBuilder = new StringBuilder();
+    private readonly StringBuilder queryBuilder = new();
     private string? root;
     private string? className;
-    private readonly List<string> proprieties = [];
-    private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
+    private readonly List<string> fields = [];
+    private readonly Dictionary<string, string> parameters = new();
+    private readonly BM25QueryBuilder bm25QueryBuilder = new();
 
-    public GraphQlQueryBuilder Operation(string operationName)
+    public QueryBuilder Operation(string operationName)
     {
         this.root = operationName;
         return this;
     }
 
-    public GraphQlQueryBuilder WithClassName(string className)
+    public QueryBuilder WithClassName(string className)
     {
         this.className = className;
         return this;
     }
 
-    public GraphQlQueryBuilder WithProprieties(string[] fields)
+    public QueryBuilder WithFields(string[] fields)
     {
-        this.proprieties.AddRange(fields);
+        this.fields.AddRange(fields);
         return this;
     }
 
-    public GraphQlQueryBuilder WithParameter(string key, object value)
+    public QueryBuilder WithParameter(string key, object value)
     {
-        parameters[key] = value is string ? $"\"{value}\"" : value.ToString();
+        parameters[key] = value.ToString();
         return this;
     }
 
-    public GraphQlQueryBuilder WithLimit(int limit)
+    public QueryBuilder WithLimit(int limit)
     {
         return WithParameter("limit", limit);
     }
 
-    public GraphQlQueryBuilder WithOffset(int offset)
+    public QueryBuilder WithOffset(int offset)
     {
         return WithParameter("offset", offset);
+    }
+    
+    public QueryBuilder WithBM25(string query)
+    {
+        bm25QueryBuilder.WithQuery(query);
+        WithParameter("bm25", bm25QueryBuilder.Build());
+        return this;
+    }
+    
+    public QueryBuilder WithBM25(string query, string[] filterFields)
+    {
+        bm25QueryBuilder.WithQuery(query).FilterOn(filterFields);
+        WithParameter("bm25", bm25QueryBuilder.Build());
+        return this;
     }
 
     public string Build()
@@ -64,7 +79,7 @@ public class GraphQlQueryBuilder
         queryBuilder.AppendLine(" {");
 
         // Append fields
-        foreach (var field in proprieties)
+        foreach (var field in fields)
         {
             queryBuilder.AppendLine($"        {field}");
         }

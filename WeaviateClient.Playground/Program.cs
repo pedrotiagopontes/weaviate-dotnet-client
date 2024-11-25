@@ -45,6 +45,13 @@ var result = await client.Data().Creator().
 Console.WriteLine(JsonSerializer.Serialize(result));
 
 // Get objects using GraphQL
-var queryResult = await client.GraphQL().Get().WithClassName("Person").WithProprieties(["name", "age"]).WithLimit(1).WithOffset(1).QueryAsync();
+var queryResult = await client.GraphQL()
+    .Get()
+    .WithClassName("Person")
+    .WithFields(["name", "age"])
+    .WithLimit(1)
+    .WithOffset(1)
+    .WithBM25("Pedro", ["name"])
+    .QueryAsync();
 Console.WriteLine("QueryResult:");
 Console.WriteLine(JsonSerializer.Serialize(queryResult.Data));

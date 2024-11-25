@@ -8,13 +8,13 @@ public class GraphQLGetter
 {
     private readonly HttpClient httpClient;
     private readonly string baseUrl;
-    private readonly GraphQlQueryBuilder queryBuilder;
+    private readonly QueryBuilder queryBuilder;
 
     public GraphQLGetter(HttpClient httpClient, string baseUrl)
     {
         this.httpClient = httpClient;
         this.baseUrl = $"{baseUrl}/graphql";
-        queryBuilder = new GraphQlQueryBuilder();
+        queryBuilder = new QueryBuilder();
         queryBuilder.Operation("Get");
     }
     
@@ -24,9 +24,9 @@ public class GraphQLGetter
         return this;
     }
 
-    public GraphQLGetter WithProprieties(string[] fields)
+    public GraphQLGetter WithFields(string[] fields)
     {
-        queryBuilder.WithProprieties(fields);
+        queryBuilder.WithFields(fields);
         return this;
     }
 
@@ -39,6 +39,18 @@ public class GraphQLGetter
     public GraphQLGetter WithOffset(int offset)
     {
         queryBuilder.WithOffset(offset);
+        return this;
+    }
+
+    public GraphQLGetter WithBM25(string query)
+    {
+        queryBuilder.WithBM25(query);
+        return this;
+    }
+    
+    public GraphQLGetter WithBM25(string query, string[] properties)
+    {
+        queryBuilder.WithBM25(query, properties);
         return this;
     }
 
