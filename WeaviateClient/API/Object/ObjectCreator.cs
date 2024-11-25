@@ -6,7 +6,7 @@ using Model;
 
 public class ObjectCreator(HttpClient httpClient, string baseUrl)
 {
-    private const string ObjectsPath = "objects";
+    private const string ResourcePath = "objects";
     
     private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private readonly string baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
@@ -53,7 +53,7 @@ public class ObjectCreator(HttpClient httpClient, string baseUrl)
     
     public async Task<WeaviateObject> CreateAsync()
     {
-        var requestUri = $"{baseUrl}/{ObjectsPath}"; 
+        var requestUri = $"{baseUrl}/{ResourcePath}"; 
         var jsonContent = new StringContent(JsonSerializer.Serialize(weaviateObject),
             Encoding.UTF8,
             "application/json");

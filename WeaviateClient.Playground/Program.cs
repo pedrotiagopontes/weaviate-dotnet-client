@@ -24,60 +24,127 @@ client.
     AcceptHeaders(["application/json"]).
     WithUserAgent("local-test").
     WithOpenAIKey(openAIKey);
+
+await DeleteExistingClasses(client);
+await CreatePersonObjects(client, 250);
+
+await ExecuteBm25Search(client);
+await ExecuteHybridSearch(client);
+await ExecuteNearVectorSearch(client);
+// TODO: Get all objects (hint: use the cursor api) and sum up the counter property
+
+async Task DeleteExistingClasses(WeaviateClient.Client.WeaviateClient weaviateClient)
+{
+    var schema = await weaviateClient.SchemaGetter().GetAsync();
+    foreach (var schemaClass in schema.Classes)
+    {
+        Console.WriteLine($"Removing existing class {schemaClass.Class}");
+        await weaviateClient.SchemaDeleter().DeleteAsync(schemaClass.Class);
+    }
+    Console.WriteLine("Deleted all existing classes");
+}
+
+async Task CreatePersonObjects(WeaviateClient.Client.WeaviateClient client, int objectsToCreate)
+{
+    Console.WriteLine($"Starting creation of {objectsToCreate} objects.");
+
+    float[] startVector = [1.0f, 2.0f, 3.0f];
+    for (var i = 0; i < objectsToCreate; i++)
+    {
+        var personFields = new Dictionary<string, object>
+        {
+            {"name", $"Person {i}"},
+            {"age", i},
+            {"counter", i}
+        };
     
-// Get all objects using REST API
-// var objects = await client.Data().Getter().GetAllAsync();
-// foreach (var obj in objects)
-// {
-//     Console.WriteLine(JsonSerializer.Serialize(obj));
-// }
+        await client.Data().Creator().
+            WithClassName("Person").
+            WithProperties(personFields).
+            WithVector(startVector)
+            .CreateAsync();
 
-// Get one object using REST API
-// var obj1 = await client.Data().Getter().GetAsync(Guid.Parse("2b0fd838-e964-48f1-9899-6282475fe858"));
-// Console.WriteLine(JsonSerializer.Serialize(obj1));
+        startVector[0] += 1.0f;
+        startVector[1] += 1.0f;
+        startVector[2] += 1.0f;
+    }
 
-// Create an object using REST API
-// var result = await client.Data().Creator().
-//     WithClassName("Person").
-//     WithProperties(new Dictionary<string, object>
-//     {
-//         {"name", "Pedro"},
-//         {"age", 30}
-//     }).
-//     CreateAsync();
-//     
-// Console.WriteLine(JsonSerializer.Serialize(result));
-//
-// // Get objects using GraphQL
-// var queryResult = await client.GraphQL()
-//     .Get()
-//     .WithClassName("Person")
-//     .WithFields(["name", "age"])
-//     .WithLimit(1)
-//     .WithOffset(1)
-//     .WithSearch()
-//     .QueryAsync();
-// Console.WriteLine("BM25 query:");
-// Console.WriteLine(JsonSerializer.Serialize(queryResult.Data));
+    Console.WriteLine($"Finished creation of {objectsToCreate} objects.");
+}
 
-// var query = new HybridQueryBuilder().WithQuery("Fisherman that catches salmon").WithAlpha(0.5f);
-// var hybridQuery = await client.GraphQL()
-//     .Get()
-//     .WithClassName("Question")
-//     .WithFields(["question", "answer"])
-//     .WithLimit(2)
-//     .WithSearch(query)
-//     .QueryAsync();
-// Console.WriteLine("Hybrid query:");
-// Console.WriteLine(JsonSerializer.Serialize(hybridQuery.Data));
+async Task ExecuteBm25Search(WeaviateClient.Client.WeaviateClient client1)
+{
+    var searchPersonWithBm25 = new BM25Builder().WithQuery("Person 10").FilterOn(["name"]);
+    var person10 = await client1.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name", "age"]).
+        WithSearch(searchPersonWithBm25).
+        WithLimit(1).
+        QueryAsync();
 
-var nearQuery = new NearVectorBuilder().WithVector([1.0f, 2.0f]);
-var nearQueryResult = await client.GraphQL()
-    .Get()
-    .WithClassName("Question")
-    .WithFields(["question", "answer"])
-    .WithLimit(2)
-    .WithSearch(nearQuery)
-    .QueryAsync();
-Console.WriteLine("nearQueryResult query:");
-Console.WriteLine(JsonSerializer.Serialize(nearQueryResult));
+    Console.WriteLine($"BM25 search: {searchPersonWithBm25.Build()} with limit 1:");
+    Console.WriteLine("\t" +JsonSerializer.Serialize(person10));
+
+    var person10Limit5 = await client1.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name", "age"]).
+        WithSearch(searchPersonWithBm25).
+        WithLimit(5).
+        QueryAsync();
+
+    Console.WriteLine($"BM25 search: {searchPersonWithBm25.Build()} with limit 5:");
+    Console.WriteLine("\t" + JsonSerializer.Serialize(person10Limit5));
+}
+
+async Task ExecuteHybridSearch(WeaviateClient.Client.WeaviateClient weaviateClient1)
+{
+    var hybridQuery = new HybridBuilder().WithQuery("Person 5").WithVector([10.0f, 11.0f, 12.0f]);
+    var hybridQueryResult = await weaviateClient1.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name"]).
+        WithSearch(hybridQuery).
+        WithLimit(5).
+        QueryAsync();
+
+    Console.WriteLine($"hybrid search: {hybridQuery.Build()} with limit 5:");
+    Console.WriteLine("\t" + JsonSerializer.Serialize(hybridQueryResult));
+
+    var hybridQueryWithAlpha = new HybridBuilder()
+        .WithQuery("Person 5")
+        .WithProperties(["name"])
+        .WithVector([10.0f, 11.0f, 12.0f])
+        .WithAlpha(0.1f);
+
+    var hybridQueryWithAlphaResult = await weaviateClient1.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name"]).
+        WithSearch(hybridQuery).
+        WithLimit(5).
+        QueryAsync();
+
+    Console.WriteLine($"hybrid search: {hybridQueryWithAlpha.Build()} with limit 5:");
+    Console.WriteLine("\t" + JsonSerializer.Serialize(hybridQueryWithAlphaResult));
+}
+
+async Task ExecuteNearVectorSearch(WeaviateClient.Client.WeaviateClient client2)
+{
+    var nearVectorQuery = new NearVectorBuilder().WithVector([10.0f, 11.0f, 12.0f]).WithCertainty(0.1f);
+    var nearVectorQueryResult = await client2.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name"]).
+        WithSearch(nearVectorQuery).
+        WithLimit(5).
+        QueryAsync();
+    Console.WriteLine($"nearVector search: {nearVectorQuery.Build()} with limit 5:");
+    Console.WriteLine("\t" + JsonSerializer.Serialize(nearVectorQueryResult));
+
+    var nearVectorQuery2 = new NearVectorBuilder().WithVector([1.0f, 2.0f, 3.0f]);
+    var nearVectorQueryResult2 = await client2.GraphQL().Get().
+        WithClassName("Person").
+        WithFields(["name"]).
+        WithSearch(nearVectorQuery2).
+        WithLimit(5).
+        QueryAsync();
+    Console.WriteLine($"nearVector search: {nearVectorQuery2.Build()} with limit 5:");
+    Console.WriteLine("\t" + JsonSerializer.Serialize(nearVectorQueryResult2));
+}

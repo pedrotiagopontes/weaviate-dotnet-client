@@ -49,6 +49,11 @@ public class WeaviateClient(HttpClient client)
         return new ObjectData(client, baseUrl);
     }
     
+    public SchemaGetter SchemaGetter()
+    {
+        return new SchemaGetter(client, baseUrl);
+    }
+    
     public SchemaDeleter SchemaDeleter()
     {
         return new SchemaDeleter(client, baseUrl);
