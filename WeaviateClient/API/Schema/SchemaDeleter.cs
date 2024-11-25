@@ -1,4 +1,4 @@
-﻿namespace WeaviateClient.Schema;
+﻿namespace WeaviateClient.API.Schema;
 
 public class SchemaDeleter(HttpClient httpClient, string baseUrl)
 {

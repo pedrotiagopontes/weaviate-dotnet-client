@@ -2,7 +2,6 @@
 
 using Client;
 using Microsoft.Extensions.Configuration;
-using Model;
 
 [TestClass]
 public sealed class GraphQLGetter
@@ -52,6 +51,7 @@ public sealed class GraphQLGetter
         
         // Assert
         Assert.IsNotNull(result);
+        Assert.IsNull(result.Errors);
         Assert.IsNotNull(result.Data);
         //TODO: better assert
     }

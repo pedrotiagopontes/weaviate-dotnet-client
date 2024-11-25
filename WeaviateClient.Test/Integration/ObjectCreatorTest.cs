@@ -1,8 +1,8 @@
 ﻿namespace WeaviateClient.Test.Integration;
 
+using API.Model;
 using Client;
 using Microsoft.Extensions.Configuration;
-using Model;
 
 [TestClass]
 public sealed class ObjectCreatorTest

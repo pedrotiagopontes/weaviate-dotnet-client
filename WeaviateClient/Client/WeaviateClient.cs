@@ -1,9 +1,9 @@
 ﻿namespace WeaviateClient.Client;
 
 using System.Net.Http.Headers;
+using API.Object;
+using API.Schema;
 using GraphQL;
-using Object;
-using Schema;
 
 public class WeaviateClient(HttpClient client)
 {

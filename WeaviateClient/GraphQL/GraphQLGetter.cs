@@ -4,26 +4,26 @@ using System.Text;
 using System.Text.Json;
 using Model;
 
-public class GetQueryBuilder: GraphQlQueryBuilder
+public class GraphQLGetter: GraphQlQueryBuilder
 {
     private readonly HttpClient httpClient;
     private readonly string baseUrl;
 
-    public GetQueryBuilder(HttpClient httpClient, string baseUrl)
+    public GraphQLGetter(HttpClient httpClient, string baseUrl)
     {
         this.httpClient = httpClient;
         this.baseUrl = $"{baseUrl}/graphql";
         Root("Get");
     }
     
-    public GetQueryBuilder WithClassName(string className)
+    public GraphQLGetter WithClassName(string className)
     {
         QueryBuilder.AppendLine($"    {className} {{");
         return this;
     }
 
     
-    public GetQueryBuilder WithFields(string[] fields)
+    public GraphQLGetter WithFields(string[] fields)
     {
         foreach (var field in fields)
         {

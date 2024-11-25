@@ -2,8 +2,8 @@
 
 public class GraphQL(HttpClient httpClient, string baseUrl)
 {
-    public GetQueryBuilder Get()
+    public GraphQLGetter Get()
     {
-        return new GetQueryBuilder(httpClient, baseUrl);
+        return new GraphQLGetter(httpClient, baseUrl);
     }
 }

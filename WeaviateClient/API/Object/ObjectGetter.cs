@@ -1,4 +1,4 @@
-﻿namespace WeaviateClient.Object;
+﻿namespace WeaviateClient.API.Object;
 
 using System.Text.Json;
 using Model;

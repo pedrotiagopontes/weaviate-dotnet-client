@@ -1,4 +1,4 @@
-﻿namespace WeaviateClient.Object;
+﻿namespace WeaviateClient.API.Object;
 
 public class ObjectData(HttpClient httpClient, string baseUrl)
 {
