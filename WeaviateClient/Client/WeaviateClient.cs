@@ -1,6 +1,8 @@
 ﻿namespace WeaviateClient.Client;
 
 using System.Net.Http.Headers;
+using GraphQL;
+using Object;
 using Schema;
 
 public class WeaviateClient(HttpClient client)
@@ -36,13 +38,18 @@ public class WeaviateClient(HttpClient client)
         return this;
     }
 
-    public Data Data()
+    public ObjectData Data()
     {
-        return new Data(client, baseUrl);
+        return new ObjectData(client, baseUrl);
     }
     
     public SchemaDeleter SchemaDeleter()
     {
         return new SchemaDeleter(client, baseUrl);
+    }
+    
+    public GraphQL GraphQL()
+    {
+        return new GraphQL(client, baseUrl);
     }
 }

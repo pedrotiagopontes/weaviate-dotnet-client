@@ -29,8 +29,8 @@ foreach (var obj in objects)
 }
 
 // Get one object using REST API
-var obj1 = await client.Data().Getter().GetAsync(Guid.Parse("2b0fd838-e964-48f1-9899-6282475fe858"));
-Console.WriteLine(JsonSerializer.Serialize(obj1));
+// var obj1 = await client.Data().Getter().GetAsync(Guid.Parse("2b0fd838-e964-48f1-9899-6282475fe858"));
+// Console.WriteLine(JsonSerializer.Serialize(obj1));
 
 // Create an object using REST API
 var result = await client.Data().Creator().
@@ -43,3 +43,8 @@ var result = await client.Data().Creator().
     CreateAsync();
     
 Console.WriteLine(JsonSerializer.Serialize(result));
+
+// Get objects using GraphQL
+var queryResult = await client.GraphQL().Get().WithClassName("Person").WithFields(["name", "age"]).QueryAsync();
+Console.WriteLine("QueryResult:");
+Console.WriteLine(JsonSerializer.Serialize(queryResult.Data));

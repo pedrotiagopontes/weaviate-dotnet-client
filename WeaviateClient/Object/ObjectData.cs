@@ -1,8 +1,6 @@
-﻿namespace WeaviateClient.Client;
+﻿namespace WeaviateClient.Object;
 
-using Object;
-
-public class Data(HttpClient httpClient, string baseUrl)
+public class ObjectData(HttpClient httpClient, string baseUrl)
 {
     public ObjectCreator Creator()
     { 
