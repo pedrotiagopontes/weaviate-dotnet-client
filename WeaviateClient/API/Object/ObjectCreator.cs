@@ -13,6 +13,12 @@ public class ObjectCreator(HttpClient httpClient, string baseUrl)
     
     private readonly WeaviateObject weaviateObject = new();
 
+    public ObjectCreator WithId(Guid id)
+    {
+        weaviateObject.Id = id;
+        return this;
+    }
+    
     public ObjectCreator WithClassName(string className)
     {
         weaviateObject.Class = className;

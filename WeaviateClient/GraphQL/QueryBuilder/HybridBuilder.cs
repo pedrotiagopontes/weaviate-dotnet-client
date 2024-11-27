@@ -5,7 +5,7 @@ public class HybridBuilder:ISearchQueryBuilder
     private string? hybridQuery;
     private float? alpha;
     private float[]? vector;
-    private readonly List<string> properties = new();
+    private readonly List<string> properties = [];
     private string? fusionType;
 
     public HybridBuilder WithQuery(string query)

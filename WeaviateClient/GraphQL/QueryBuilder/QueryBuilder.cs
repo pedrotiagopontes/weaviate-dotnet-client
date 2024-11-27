@@ -4,10 +4,10 @@ using System.Text;
 
 public class QueryBuilder
 {
-    private readonly StringBuilder queryBuilder = new();
     private string? root;
     private string? className;
     private readonly List<string> fields = [];
+    private readonly List<string> additionalFields = [];
     private readonly Dictionary<string, string> parameters = new();
     private bool hasSearchQuery;
 
@@ -26,6 +26,12 @@ public class QueryBuilder
     public QueryBuilder WithFields(string[] requestedFields)
     {
         this.fields.AddRange(requestedFields);
+        return this;
+    }
+    
+    public QueryBuilder WithAdditionalFields(string[] requestedFields)
+    {
+        this.additionalFields.AddRange(requestedFields);
         return this;
     }
 
@@ -63,6 +69,7 @@ public class QueryBuilder
 
     public string Build()
     {
+        var queryBuilder = new StringBuilder();
         if (string.IsNullOrEmpty(root) || string.IsNullOrEmpty(className))
         {
             throw new InvalidOperationException("Both root and class name must be specified.");
@@ -77,15 +84,27 @@ public class QueryBuilder
             queryBuilder.Append($" ({formattedParams})");
         }
 
+        // open fields 
         queryBuilder.AppendLine(" {");
-        
         foreach (var field in fields)
         {
             queryBuilder.AppendLine($"        {field}");
         }
 
-        // Close blocks
+        if (additionalFields.Count > 0)
+        {
+            queryBuilder.Append("        _additional { ");
+            foreach (var additionalField in additionalFields)
+            {
+                queryBuilder.Append($"{additionalField} ");
+            }
+            queryBuilder.AppendLine("}");
+        }
+        
+        //close fields
         queryBuilder.AppendLine("    }");
+        
+        //close query
         queryBuilder.AppendLine("}");
 
         return $"{{\n{queryBuilder}}}";

@@ -31,6 +31,12 @@ public class GraphQLGetter
         return this;
     }
 
+    public GraphQLGetter WithAdditionalFields(string[] additionalFields)
+    {
+        queryBuilder.WithAdditionalFields(additionalFields);
+        return this;
+    }
+
     public GraphQLGetter WithLimit(int limit)
     {
         queryBuilder.WithLimit(limit);
@@ -47,6 +53,23 @@ public class GraphQLGetter
     {
         queryBuilder.WithSearch(searchQueryBuilder);
         return this;
+    }
+    
+    public GraphQLGetter WithAfter(string cursor)
+    {
+        if (string.IsNullOrWhiteSpace(cursor))
+        {
+            // we want to explicitly ignore empty cursor for a better UX when using it.
+            // This way the user doens't need to care about it.
+            return this;
+        }
+        
+        queryBuilder.WithAfter(cursor);
+        return this;
+    }
+    public override string ToString()
+    {
+        return queryBuilder.Build();
     }
 
     public async Task<GraphQLResponse> QueryAsync()
