@@ -28,16 +28,4 @@ public class WeaviateObject
     // Vectors associated with the Object
     [JsonPropertyName("vector")]
     public float[]? Vector { get; set; }
-    
-    // Multiple vectors associated with the Object
-    [JsonPropertyName("vectors")]
-    public Dictionary<string, float[]>? Vectors { get; set; }
-
-    // Name of the Object's tenant
-    [JsonPropertyName("tenant")]
-    public string Tenant { get; set; }
 }
-
-// Vector weights
-//[JsonPropertyName("vectorWeights")]
-//public VectorWeights VectorWeights { get; set; }

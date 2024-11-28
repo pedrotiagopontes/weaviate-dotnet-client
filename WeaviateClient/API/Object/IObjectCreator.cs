@@ -9,7 +9,5 @@ public interface IObjectCreator
     IObjectCreator WithProperties(Dictionary<string, object> properties);
     IObjectCreator WithProperty(string key, object value);
     IObjectCreator WithVector(float[] vector);
-    IObjectCreator WithNamedVectors(Dictionary<string, float[]> vectors);
-    IObjectCreator WithNamedVector(string key, float[] value);
     Task<WeaviateObject> CreateAsync();
 }

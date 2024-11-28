@@ -31,6 +31,13 @@ public sealed class SchemaClientTest
         });
 
         serviceProvider = serviceCollection.BuildServiceProvider();
+        
+        // Seed schema for integration tests
+        // Note: This is a workaround to seed the schema for the integration tests for this POC.
+        // For a live app we should use some kind of migration tool to make sure our migration tests don't depend
+        // on other interfaces of the same SDK.
+        var client = serviceProvider.GetRequiredService<IWeaviateClient>();
+        client.Data().Creator().WithClassName("IntegrationTestSchema").CreateAsync();
     }
     
     [TestMethod]
@@ -40,7 +47,7 @@ public sealed class SchemaClientTest
         var client = serviceProvider.GetRequiredService<IWeaviateClient>();
         
         // Act
-        await client.Schema().DeleteAsync("Person");
+        await client.Schema().DeleteAsync("IntegrationTestSchema");
         
         // Assert
         // TODO

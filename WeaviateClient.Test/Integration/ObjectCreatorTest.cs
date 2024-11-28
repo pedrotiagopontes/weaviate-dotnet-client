@@ -34,17 +34,30 @@ public sealed class ObjectCreatorTest
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
     
+    [ClassCleanup()]
+    public static void ClassCleanup()
+    {
+        // Seed schema for integration tests
+        // Note: This is a workaround to seed the schema for the integration tests for this POC.
+        // For a live app we should use some kind of migration tool to make sure our migration tests don't depend
+        // on other interfaces of the same SDK.
+        var client = serviceProvider.GetRequiredService<IWeaviateClient>();
+        client.Schema().DeleteAsync("IntegrationTestObjectCreator");
+    }
+    
     [TestMethod]
     [TestCategory("Integration")]
     public async Task CreateObject_ShouldSucceed_WhenValidInput()
     {   // Arrange
         var expectedObject = new WeaviateObject
         {
-            Class = "Person",
+            Id = Guid.NewGuid(),
+            Class = "IntegrationTestObjectCreator",
             Properties = new Dictionary<string, object>
             {
                 { "name", "TestUser" },
-                { "age", 30 }
+                { "age", 30 },
+                { "nickname", "Test" },
             },
             Vector = [1.0f, 1.0f, 1.0f]
         };
@@ -53,20 +66,22 @@ public sealed class ObjectCreatorTest
         
         // Act
         var result = await client.Data().Creator().
-            WithClassName("Person").
+            WithId(expectedObject.Id.Value).
+            WithClassName("IntegrationTestObjectCreator").
             WithProperties(new Dictionary<string, object>
             {
                 {"name", "TestUser"},
                 {"age", 30},
             }).
+            WithProperty("nickname", "Test").
             WithVector([1.0f, 1.0f, 1.0f]).
             CreateAsync();
         
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsNotNull(result.Id);
         Assert.IsNotNull(result.CreationTimeUnix);
         Assert.IsNotNull(result.LastUpdateTimeUnix);
+        Assert.AreEqual(expectedObject.Id, result.Id);
         Assert.AreEqual(expectedObject.Class, result.Class);
         foreach (var property in expectedObject.Properties)
         {
@@ -74,10 +89,15 @@ public sealed class ObjectCreatorTest
             Assert.AreEqual(property.Value.ToString(), result.Properties[property.Key].ToString());
         }
         
-        Assert.IsNotNull(result.Vector);
-        foreach (var expectedVector in expectedObject.Vector)
+        AssertEqualVector(result.Vector, expectedObject.Vector);
+    }
+
+    private static void AssertEqualVector(float[] result, float[] expected)
+    {
+        Assert.IsNotNull(result);
+        foreach (var expectedVector in expected)
         {
-            foreach (var resultVector in result.Vector)
+            foreach (var resultVector in result)
             {
                 Assert.AreEqual(expectedVector, resultVector);
             }

@@ -29,9 +29,8 @@ async Task DeleteExistingClasses(IWeaviateClient weaviateClient)
     Console.WriteLine("Deleted all existing classes");
 }
 
-async Task<Guid?> CreatePersonObjects(IWeaviateClient client, int objectsToCreate)
+async Task CreatePersonObjects(IWeaviateClient client, int objectsToCreate)
 {
-    Guid? firstPersonID = Guid.Empty;
     Console.WriteLine($"Starting creation of {objectsToCreate} objects.");
 
     float[] startVector = [1.0f, 2.0f, 3.0f];
@@ -44,17 +43,11 @@ async Task<Guid?> CreatePersonObjects(IWeaviateClient client, int objectsToCreat
             {"counter", i}
         };
     
-        var person = await client.Data().Creator().
+        await client.Data().Creator().
             WithClassName("Person").
             WithProperties(personFields).
             WithVector(startVector)
             .CreateAsync();
-
-        if (i == 0)
-        {
-            // save first person ID to use in the cursor
-            firstPersonID = person.Id;
-        }
         
         startVector[0] += 1.0f;
         startVector[1] += 1.0f;
@@ -62,8 +55,6 @@ async Task<Guid?> CreatePersonObjects(IWeaviateClient client, int objectsToCreat
     }
 
     Console.WriteLine($"Finished creation of {objectsToCreate} objects.");
-    
-    return firstPersonID;
 }
 
 async Task ExecuteBm25Search(IWeaviateClient client1)

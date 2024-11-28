@@ -41,19 +41,6 @@ public class ObjectCreator(WeaviateHttpClient httpClient):IObjectCreator
         weaviateObject.Vector = vector;
         return this;
     }
-
-    public IObjectCreator WithNamedVectors(Dictionary<string, float[]> vectors)
-    {
-        weaviateObject.Vectors = vectors;
-        return this;
-    }
-
-    public IObjectCreator WithNamedVector(string key, float[] value)
-    {
-        weaviateObject.Vectors ??= new Dictionary<string, float[]>();
-        weaviateObject.Vectors[key] = value;
-        return this;
-    }
     
     public async Task<WeaviateObject> CreateAsync()
     {
