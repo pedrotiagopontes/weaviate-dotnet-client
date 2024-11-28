@@ -1,56 +1,54 @@
 ﻿namespace WeaviateClient.API.Object;
 
-using System.Text;
-using System.Text.Json;
+using Client;
 using Model;
 
-public class ObjectCreator(HttpClient httpClient, string baseUrl)
+public class ObjectCreator(WeaviateHttpClient httpClient):IObjectCreator
 {
     private const string ResourcePath = "objects";
     
-    private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    private readonly string baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+    private readonly WeaviateHttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     
     private readonly WeaviateObject weaviateObject = new();
 
-    public ObjectCreator WithId(Guid id)
+    public IObjectCreator WithId(Guid id)
     {
         weaviateObject.Id = id;
         return this;
     }
     
-    public ObjectCreator WithClassName(string className)
+    public IObjectCreator WithClassName(string className)
     {
         weaviateObject.Class = className;
         return this;
     }
 
-    public ObjectCreator WithProperties(Dictionary<string, object> properties)
+    public IObjectCreator WithProperties(Dictionary<string, object> properties)
     {
         weaviateObject.Properties = properties;
         return this;
     }
 
-    public ObjectCreator WithProperty(string key, object value)
+    public IObjectCreator WithProperty(string key, object value)
     {
         weaviateObject.Properties ??= new Dictionary<string, object>();
         weaviateObject.Properties[key] = value;
         return this;
     }
 
-    public ObjectCreator WithVector(float[] vector)
+    public IObjectCreator WithVector(float[] vector)
     {
         weaviateObject.Vector = vector;
         return this;
     }
 
-    public ObjectCreator WithNamedVectors(Dictionary<string, float[]> vectors)
+    public IObjectCreator WithNamedVectors(Dictionary<string, float[]> vectors)
     {
         weaviateObject.Vectors = vectors;
         return this;
     }
 
-    public ObjectCreator WithNamedVector(string key, float[] value)
+    public IObjectCreator WithNamedVector(string key, float[] value)
     {
         weaviateObject.Vectors ??= new Dictionary<string, float[]>();
         weaviateObject.Vectors[key] = value;
@@ -59,17 +57,6 @@ public class ObjectCreator(HttpClient httpClient, string baseUrl)
     
     public async Task<WeaviateObject> CreateAsync()
     {
-        var requestUri = $"{baseUrl}/{ResourcePath}"; 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(weaviateObject),
-            Encoding.UTF8,
-            "application/json");
-
-        var response = await httpClient.PostAsync(requestUri, jsonContent);
-
-        response.EnsureSuccessStatusCode();
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var createdObject = await JsonSerializer.DeserializeAsync<WeaviateObject>(responseStream);
-
-        return createdObject ?? new WeaviateObject();
+        return await httpClient.PostAsync<WeaviateObject, WeaviateObject>(ResourcePath, weaviateObject);
     }
 }

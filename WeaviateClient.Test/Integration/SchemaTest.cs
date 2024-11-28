@@ -6,11 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [TestClass]
-public sealed class GraphQLGetter
+public sealed class SchemaClientTest
 {
     private static IServiceProvider serviceProvider;
     private static IConfiguration Configuration { get; set; }
-
+    
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
@@ -35,41 +35,14 @@ public sealed class GraphQLGetter
     
     [TestMethod]
     [TestCategory("Integration")]
-    public async Task GraphQLGetter_BaseCase_ShouldSucceed()
+    public async Task DeleteSchema_ShouldSucceed()
     {   // Arrange
         var client = serviceProvider.GetRequiredService<IWeaviateClient>();
         
         // Act
-        var result = await client.GraphQL().Get().
-            WithClassName("Person").
-            WithFields(["name", "age"]).
-            RunAsync();
+        await client.Schema().DeleteAsync("Person");
         
         // Assert
-        Assert.IsNotNull(result);
-        Assert.IsNull(result.Errors);
-        Assert.IsNotNull(result.Data);
-        //TODO: better assert
-    }
-    
-    [TestMethod]
-    [TestCategory("Integration")]
-    public async Task GraphQLGetter_WithLimitAndOffset_ShouldSucceed()
-    {   // Arrange
-        var client = serviceProvider.GetRequiredService<IWeaviateClient>();
-        
-        // Act
-        var result = await client.GraphQL().Get().
-            WithClassName("Person").
-            WithFields(["name", "age"]).
-            WithLimit(1).
-            WithOffset(1).
-            RunAsync();
-        
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.IsNull(result.Errors);
-        Assert.IsNotNull(result.Data);
-        //TODO: better assert
+        // TODO
     }
 }

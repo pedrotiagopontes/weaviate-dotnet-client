@@ -1,6 +1,5 @@
 ﻿namespace WeaviateClient.API.Model;
 
-using System;
 using System.Text.Json.Serialization;
 
 public class Schema

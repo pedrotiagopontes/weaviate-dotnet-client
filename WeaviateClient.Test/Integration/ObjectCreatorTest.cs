@@ -2,34 +2,36 @@
 
 using API.Model;
 using Client;
+using Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 [TestClass]
 public sealed class ObjectCreatorTest
 {
-    private string hostAddress;
-    private string apiKey;
+    private static IServiceProvider serviceProvider;
     private static IConfiguration Configuration { get; set; }
     
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
+        var serviceCollection = new ServiceCollection();
         Configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .Build();
-    }
 
-    [TestInitialize]
-    public void Initialize()
-    {
-        hostAddress = Configuration["WCD_HOST_NAME"] ?? string.Empty;
-        apiKey = Configuration["WCD_API_KEY"] ?? string.Empty;
+        serviceCollection.AddSingleton<IConfiguration>(Configuration);
 
-        if (string.IsNullOrEmpty(hostAddress) || string.IsNullOrEmpty(apiKey))
+        serviceCollection.AddWeaviateClient(options =>
         {
-            Assert.Fail("Environment variables 'WCD_HOST_NAME' or 'WCD_API_KEY' are not set.");
-        }
+            options.BaseUrl = Configuration["WCD_HOST_NAME"] ?? string.Empty;
+            options.ApiKey = Configuration["WCD_API_KEY"] ?? string.Empty;
+            options.UserAgent = "local-test";
+            options.OpenAIKey = Configuration["OPENAI_API_KEY"] ?? string.Empty;
+        });
+
+        serviceProvider = serviceCollection.BuildServiceProvider();
     }
     
     [TestMethod]
@@ -46,13 +48,8 @@ public sealed class ObjectCreatorTest
             },
             Vector = [1.0f, 1.0f, 1.0f]
         };
-        var httpClient = new HttpClient();
-        var client = new WeaviateClient(httpClient);
-        client.
-            WithBaseURl(hostAddress).
-            WithApikey(apiKey).
-            WithUserAgent("local-test").
-            AcceptHeaders(["application/json"]);
+        
+        var client = serviceProvider.GetRequiredService<IWeaviateClient>();
         
         // Act
         var result = await client.Data().Creator().

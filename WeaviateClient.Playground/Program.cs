@@ -2,8 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using WeaviateClient.GraphQL.Model;
 using WeaviateClient.GraphQL.QueryBuilder;
+using Microsoft.Extensions.DependencyInjection;
+using WeaviateClient.Client;
+using WeaviateClient.Extensions;
 
-var client = InitializeWeaviateClient();
+var client = GetClientFromDIContainer();
+//var client = GetDefaultClient();
+
 await DeleteExistingClasses(client);
 await CreatePersonObjects(client, 250);
 await ExecuteBm25Search(client);
@@ -13,18 +18,18 @@ await IterateAllObjects(client);
 return;
 
 
-async Task DeleteExistingClasses(WeaviateClient.Client.WeaviateClient weaviateClient)
+async Task DeleteExistingClasses(IWeaviateClient weaviateClient)
 {
-    var schema = await weaviateClient.SchemaGetter().GetAsync();
+    var schema = await weaviateClient.Schema().GetAsync();
     foreach (var schemaClass in schema.Classes)
     {
         Console.WriteLine($"Removing existing class {schemaClass.Class}");
-        await weaviateClient.SchemaDeleter().DeleteAsync(schemaClass.Class);
+        await weaviateClient.Schema().DeleteAsync(schemaClass.Class);
     }
     Console.WriteLine("Deleted all existing classes");
 }
 
-async Task<Guid?> CreatePersonObjects(WeaviateClient.Client.WeaviateClient client, int objectsToCreate)
+async Task<Guid?> CreatePersonObjects(IWeaviateClient client, int objectsToCreate)
 {
     Guid? firstPersonID = Guid.Empty;
     Console.WriteLine($"Starting creation of {objectsToCreate} objects.");
@@ -61,7 +66,7 @@ async Task<Guid?> CreatePersonObjects(WeaviateClient.Client.WeaviateClient clien
     return firstPersonID;
 }
 
-async Task ExecuteBm25Search(WeaviateClient.Client.WeaviateClient client1)
+async Task ExecuteBm25Search(IWeaviateClient client1)
 {
     var searchPersonWithBm25 = new BM25Builder().WithQuery("Person 10").FilterOn(["name"]);
     var searchPersonWithBm25Query = client1.GraphQL().Get().
@@ -71,15 +76,15 @@ async Task ExecuteBm25Search(WeaviateClient.Client.WeaviateClient client1)
         WithSearch(searchPersonWithBm25).
         WithLimit(1);
 
-    var result = await searchPersonWithBm25Query.QueryAsync();
+    var result = await searchPersonWithBm25Query.RunAsync();
     PrintQuery(searchPersonWithBm25Query.ToString(), result);
 
     searchPersonWithBm25Query.WithLimit(5);
-    var result2 = await searchPersonWithBm25Query.QueryAsync();
+    var result2 = await searchPersonWithBm25Query.RunAsync();
     PrintQuery(searchPersonWithBm25Query.ToString(), result2);
 }
 
-async Task ExecuteHybridSearch(WeaviateClient.Client.WeaviateClient weaviateClient1)
+async Task ExecuteHybridSearch(IWeaviateClient weaviateClient1)
 {
     var hybridQuerySearch = new HybridBuilder().WithQuery("Person 5").WithVector([10.0f, 11.0f, 12.0f]);
     var hybridQuery =  weaviateClient1.GraphQL().Get().
@@ -88,7 +93,7 @@ async Task ExecuteHybridSearch(WeaviateClient.Client.WeaviateClient weaviateClie
         WithSearch(hybridQuerySearch).
         WithLimit(5);
 
-    var result = await hybridQuery.QueryAsync();
+    var result = await hybridQuery.RunAsync();
     PrintQuery(hybridQuery.ToString(), result);
 
     var hybridQueryWithAlphaSearch = new HybridBuilder()
@@ -103,11 +108,11 @@ async Task ExecuteHybridSearch(WeaviateClient.Client.WeaviateClient weaviateClie
         WithSearch(hybridQueryWithAlphaSearch).
         WithLimit(5);
 
-    var result2 = await hybridQueryWithAlpha.QueryAsync();
+    var result2 = await hybridQueryWithAlpha.RunAsync();
     PrintQuery(hybridQueryWithAlpha.ToString(), result2);
 }
 
-async Task ExecuteNearVectorSearch(WeaviateClient.Client.WeaviateClient client2)
+async Task ExecuteNearVectorSearch(IWeaviateClient client2)
 {
     var searchQuery = new NearVectorBuilder().WithVector([10.0f, 11.0f, 12.0f]).WithCertainty(0.1f);
     var fullQuery = client2.GraphQL().Get().
@@ -116,7 +121,7 @@ async Task ExecuteNearVectorSearch(WeaviateClient.Client.WeaviateClient client2)
         WithSearch(searchQuery).
         WithLimit(5);
     
-    var result = await fullQuery.QueryAsync();
+    var result = await fullQuery.RunAsync();
     PrintQuery(fullQuery.ToString(), result);
 
     var searchQuery2 = new NearVectorBuilder().WithVector([1.0f, 2.0f, 3.0f]);
@@ -126,38 +131,11 @@ async Task ExecuteNearVectorSearch(WeaviateClient.Client.WeaviateClient client2)
         WithSearch(searchQuery2).
         WithLimit(5);
     
-    var result2 = await nearVectorQuery2.QueryAsync();
+    var result2 = await nearVectorQuery2.RunAsync();
     PrintQuery(nearVectorQuery2.ToString(), result2);
 }
 
-WeaviateClient.Client.WeaviateClient InitializeWeaviateClient()
-{
-    var configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-        .AddEnvironmentVariables()
-        .Build();
-
-    var hostAddress = configuration["WCD_HOST_NAME"] ?? string.Empty;
-    var apiKey = configuration["WCD_API_KEY"] ?? string.Empty;
-    var openAiKey = configuration["OPENAI_API_KEY"] ?? string.Empty;
-
-    if (string.IsNullOrEmpty(hostAddress) || string.IsNullOrEmpty(apiKey))
-    {
-        throw new MissingFieldException("WCD_HOST_NAME or WCD_API_KEY not found");
-    }
-
-    var httpClient = new HttpClient();
-    var weaviateClient2 = new WeaviateClient.Client.WeaviateClient(httpClient);
-    weaviateClient2.
-        WithBaseURl(hostAddress).
-        WithApikey(apiKey).
-        AcceptHeaders(["application/json"]).
-        WithUserAgent("local-test").
-        WithOpenAIKey(openAiKey);
-    return weaviateClient2;
-}
-
-async Task IterateAllObjects(WeaviateClient.Client.WeaviateClient client3)
+async Task IterateAllObjects(IWeaviateClient client3)
 {
     var cursorWithPersonId = "";
     var totalCount = 0;
@@ -171,7 +149,7 @@ async Task IterateAllObjects(WeaviateClient.Client.WeaviateClient client3)
             .WithAfter(cursorWithPersonId)
             .WithLimit(55);
 
-        var result = await query.QueryAsync();
+        var result = await query.RunAsync();
         //PrintQuery(query.ToString(), result);
     
         if (!result.Data.ContainsKey("Get"))
@@ -189,6 +167,46 @@ async Task IterateAllObjects(WeaviateClient.Client.WeaviateClient client3)
         cursorWithPersonId = data.Person[data.Person.Count - 1].AddicitionalFields["id"];
         Console.WriteLine($"Current count {totalCount} at cursor {cursorWithPersonId}");
     }
+}
+
+IWeaviateClient GetDefaultClient()
+{
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .Build();
+    
+    var options = new WeaviateClientOptions
+    {
+        BaseUrl = configuration["WCD_HOST_NAME"] ?? string.Empty,
+        ApiKey = configuration["WCD_API_KEY"] ?? string.Empty,
+        UserAgent = "local-test",
+        OpenAIKey = configuration["OPENAI_API_KEY"] ?? string.Empty
+    };
+
+    return WeaviateClient.Client.WeaviateClient.CreateDefaultClient(options);
+}
+
+IWeaviateClient GetClientFromDIContainer()
+{
+    var services = new ServiceCollection();
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .Build();
+
+    services.AddSingleton<IConfiguration>(configuration);
+
+    services.AddWeaviateClient(options =>
+    {
+        options.BaseUrl = configuration["WCD_HOST_NAME"] ?? string.Empty;
+        options.ApiKey = configuration["WCD_API_KEY"] ?? string.Empty;
+        options.UserAgent = "local-test";
+        options.OpenAIKey = configuration["OPENAI_API_KEY"] ?? string.Empty;
+    });
+    
+    var serviceProvider = services.BuildServiceProvider(); 
+    return serviceProvider.GetRequiredService<IWeaviateClient>();
 }
 
 void PrintQuery(string query , GraphQLResponse result)

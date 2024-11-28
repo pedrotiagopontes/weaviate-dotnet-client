@@ -2,7 +2,7 @@
 
 using System.Text;
 
-public class QueryBuilder
+public class QueryBuilder: IQueryBuilder
 {
     private string? root;
     private string? className;
@@ -11,46 +11,46 @@ public class QueryBuilder
     private readonly Dictionary<string, string> parameters = new();
     private bool hasSearchQuery;
 
-    public QueryBuilder Operation(string operationName)
+    public IQueryBuilder Operation(string operationName)
     {
         this.root = operationName;
         return this;
     }
 
-    public QueryBuilder WithClassName(string name)
+    public IQueryBuilder WithClassName(string name)
     {
         this.className = name;
         return this;
     }
 
-    public QueryBuilder WithFields(string[] requestedFields)
+    public IQueryBuilder WithFields(string[] requestedFields)
     {
         this.fields.AddRange(requestedFields);
         return this;
     }
     
-    public QueryBuilder WithAdditionalFields(string[] requestedFields)
+    public IQueryBuilder WithAdditionalFields(string[] requestedFields)
     {
         this.additionalFields.AddRange(requestedFields);
         return this;
     }
 
-    public QueryBuilder WithLimit(int limit)
+    public IQueryBuilder WithLimit(int limit)
     {
         return WithParameter("limit", limit);
     }
 
-    public QueryBuilder WithOffset(int offset)
+    public IQueryBuilder WithOffset(int offset)
     {
         return WithParameter("offset", offset);
     }
 
-    public QueryBuilder WithAfter(string cursor)
+    public IQueryBuilder WithAfter(string cursor)
     {
         return WithParameter("after", $"\"{cursor}\"");
     }
     
-    public QueryBuilder WithSearch(ISearchQueryBuilder searchQueryBuilder)
+    public IQueryBuilder WithSearch(ISearchQueryBuilder searchQueryBuilder)
     {
         if (hasSearchQuery)
         {
@@ -61,7 +61,7 @@ public class QueryBuilder
         return this;
     }
     
-    private QueryBuilder WithParameter(string key, object value)
+    private IQueryBuilder WithParameter(string key, object value)
     {
         parameters[key] = value.ToString() ?? throw new ArgumentException("value cannot be null");
         return this;

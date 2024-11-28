@@ -1,61 +1,58 @@
 ﻿namespace WeaviateClient.GraphQL;
 
-using System.Text;
-using System.Text.Json;
+using Client;
 using Model;
 using QueryBuilder;
 
-public class GraphQLGetter
+public class GraphQLGetter: IGraphQLGetter
 {
-    private readonly HttpClient httpClient;
-    private readonly string baseUrl;
-    private readonly QueryBuilder.QueryBuilder queryBuilder;
+    private readonly WeaviateHttpClient httpClient;
+    private readonly IQueryBuilder queryBuilder;
 
-    public GraphQLGetter(HttpClient httpClient, string baseUrl)
+    public GraphQLGetter(WeaviateHttpClient httpClient, IQueryBuilder queryBuilder)
     {
-        this.httpClient = httpClient;
-        this.baseUrl = $"{baseUrl}/graphql";
-        queryBuilder = new QueryBuilder.QueryBuilder();
+        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        this.queryBuilder = queryBuilder ?? throw new ArgumentNullException(nameof(queryBuilder));
         queryBuilder.Operation("Get");
     }
     
-    public GraphQLGetter WithClassName(string className)
+    public IGraphQLGetter WithClassName(string className)
     {
         queryBuilder.WithClassName(className);
         return this;
     }
 
-    public GraphQLGetter WithFields(string[] fields)
+    public IGraphQLGetter WithFields(string[] fields)
     {
         queryBuilder.WithFields(fields);
         return this;
     }
 
-    public GraphQLGetter WithAdditionalFields(string[] additionalFields)
+    public IGraphQLGetter WithAdditionalFields(string[] additionalFields)
     {
         queryBuilder.WithAdditionalFields(additionalFields);
         return this;
     }
 
-    public GraphQLGetter WithLimit(int limit)
+    public IGraphQLGetter WithLimit(int limit)
     {
         queryBuilder.WithLimit(limit);
         return this;
     }
 
-    public GraphQLGetter WithOffset(int offset)
+    public IGraphQLGetter WithOffset(int offset)
     {
         queryBuilder.WithOffset(offset);
         return this;
     }
 
-    public GraphQLGetter WithSearch(ISearchQueryBuilder searchQueryBuilder)
+    public IGraphQLGetter WithSearch(ISearchQueryBuilder searchQueryBuilder)
     {
         queryBuilder.WithSearch(searchQueryBuilder);
         return this;
     }
     
-    public GraphQLGetter WithAfter(string cursor)
+    public IGraphQLGetter WithAfter(string cursor)
     {
         if (string.IsNullOrWhiteSpace(cursor))
         {
@@ -72,20 +69,10 @@ public class GraphQLGetter
         return queryBuilder.Build();
     }
 
-    public async Task<GraphQLResponse> QueryAsync()
+    public async Task<GraphQLResponse> RunAsync()
     {
         var rawQuery = queryBuilder.Build();
         var query = new GraphQLQuery(rawQuery);
-        var jsonContent = new StringContent(JsonSerializer.Serialize(query),
-            Encoding.UTF8,
-            "application/json");
-
-        var response = await httpClient.PostAsync(baseUrl, jsonContent);
-
-        response.EnsureSuccessStatusCode();
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var graphQlResponse = await JsonSerializer.DeserializeAsync<GraphQLResponse>(responseStream);
-
-        return graphQlResponse ?? new GraphQLResponse();
+        return await httpClient.PostAsync<GraphQLQuery, GraphQLResponse>("graphql", query);
     }
 }
