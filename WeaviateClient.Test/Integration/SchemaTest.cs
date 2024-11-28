@@ -49,7 +49,6 @@ public sealed class SchemaClientTest
         // Act
         await client.Schema().DeleteAsync("IntegrationTestSchema");
         
-        // Assert
-        // TODO
+        // No explicit Assert, if the method does not throw an exception it is considered a success
     }
 }
