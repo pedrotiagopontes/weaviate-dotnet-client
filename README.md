@@ -82,7 +82,7 @@ implementation if the user of SDK needs to do so.
  - For this PoC, error handling is done by throwing generic exceptions. Further work is required. 
 
 ### Design considerations regarding tests:
-A minimal set of tests is written to demonstrate how to test the client and prove that it works. A higher coverage would be required on a real project.
+A minimal set of tests is written to demonstrate how to test the client and prove that it works. More tests should be added in the future.
    - **Unit tests**: 
      - For the unit tests it was prioritized covering the query builders, since it is where most of this client specific logic lives.
 All the other classes are mostly wrappers around the HttpClient designed to provide a better UX and where not covered in the context of this PoC. 
